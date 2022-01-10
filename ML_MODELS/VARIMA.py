@@ -74,10 +74,16 @@ for dist in main_df.Dist.unique():
                             
         except:
             print("Data Insufficient for this district")
+        df = conn.table('Rice'+str(int(dist)))
+        df.drop(['Year']).collect()
+        df.drop(['ID']).collect()
+        df = df.add_id('ID')
+
+
         print("hello0")
-        vectorArima1 = VectorARIMA(order=(-1, 2, -1), model_type = 'VARMA', search_method='grid_search', output_fitted=True, max_p=5, max_q=5)
+        vectorArima1 = VectorARIMA(order=(-1, 2, -1), model_type = 'VARMA', search_method='eccm', output_fitted=True, max_p=5, max_q=5)
         print("hello2")
-        vectorArima1.fit(data=dist_main_df)
+        vectorArima1.fit(data=df)
 
         print(vectorArima1.model_.collect())
         print(vectorArima1.fitted_.collect())
