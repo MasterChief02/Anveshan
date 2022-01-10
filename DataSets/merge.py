@@ -17,15 +17,20 @@ for index, row  in area_prod_df.iterrows():
     try:
         dist = row['DIST']
         year = row['YEAR']
-        yeild = row['SUNF_TQ']/row['SUNF_TA']
+        yeild = row['RICE_TQ']/row['RICE_TA']
         rain = rainfall_df[(rainfall_df['YEAR']==year) & (rainfall_df['DIST']==dist)].iloc[0]['ANNUAL']
-        n_tc = fert_df[(fert_df['YEAR']==year) & (fert_df['DIST']==dist)].iloc[0]['N_TC'] / row['SUNF_TA']
-        p_tc = fert_df[(fert_df['YEAR']==year) & (fert_df['DIST']==dist)].iloc[0]['P_TC'] / row['SUNF_TA']
-        k_tc = fert_df[(fert_df['YEAR']==year) & (fert_df['DIST']==dist)].iloc[0]['K_TC'] / row['SUNF_TA']
-        npk_tc = fert_df[(fert_df['YEAR']==year) & (fert_df['DIST']==dist)].iloc[0]['NPK_TC'] / row['SUNF_TA']
+        n_tc = fert_df[(fert_df['YEAR']==year) & (fert_df['DIST']==dist)].iloc[0]['N_TC'] / row['RICE_TA']
+        p_tc = fert_df[(fert_df['YEAR']==year) & (fert_df['DIST']==dist)].iloc[0]['P_TC'] / row['RICE_TA']
+        k_tc = fert_df[(fert_df['YEAR']==year) & (fert_df['DIST']==dist)].iloc[0]['K_TC'] / row['RICE_TA']
+        npk_tc = fert_df[(fert_df['YEAR']==year) & (fert_df['DIST']==dist)].iloc[0]['NPK_TC'] / row['RICE_TA']
         yeild_rainfall_fert.loc[len(yeild_rainfall_fert.index)] = [dist,year,yeild,rain,n_tc,p_tc,k_tc,npk_tc]
     except:
         continue
 
 print(yeild_rainfall_fert.head)
-yeild_rainfall_fert.to_csv(os.getcwd()+"/Output/SUNF.csv")
+yeild_rainfall_fert.to_csv(os.getcwd()+"/Output/rice.csv")
+main_df=pd.read_csv(os.getcwd()+"/Output/rice.csv")
+
+for dist in main_df.Dist.unique():
+    dist_df=main_df[(main_df['Dist']==dist)][['Year','Yield','Rain','N_TC','P_TC','K_TC','NPK_TC']]
+    dist_df.to_csv(os.getcwd()+"/Output/rice"+str(dist)+".csv")

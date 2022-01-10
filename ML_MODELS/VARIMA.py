@@ -8,6 +8,8 @@ from statsmodels.tsa.stattools import grangercausalitytests
 from statsmodels.tsa.stattools import adfuller
 from hana_ml.algorithms.pal.tsa.vector_arima import VectorARIMA
 
+conn = dataframe.ConnectionContext('e8bce757-9d85-4c9e-96b5-2a44a42dc6c0.hana.trial-us10.hanacloud.ondemand.com', '443', 'DBADMIN', 'TestPass1$')
+
 def adfuller_test(series, sig=0.1, name=''):
     res = adfuller(series, autolag='AIC')    
     p_value = round(res[1], 3) 
@@ -65,18 +67,21 @@ for dist in main_df.Dist.unique():
                 if (stationary_count==5):
                     break
                 cmd = int(input("Go for next level differencing (1 for yes): "))
-            vectorArima2 = VectorARIMA(order=(-1, diff, -1), model_type = 'VARMA', search_method='eccm', output_fitted=True, max_p=5, max_q=5)
-            vectorArima2.fit(data=dist_main_df)
-
-            print(vectorArima2.model_.collect())
-            print(vectorArima2.fitted_.collect())
-            print(vectorArima2.model_.collect()['CONTENT_VALUE'][3])
+            #eccm search method
+            
                 
 
                             
         except:
             print("Data Insufficient for this district")
-        
+        print("hello0")
+        vectorArima1 = VectorARIMA(order=(-1, 2, -1), model_type = 'VARMA', search_method='grid_search', output_fitted=True, max_p=5, max_q=5)
+        print("hello2")
+        vectorArima1.fit(data=dist_main_df)
+
+        print(vectorArima1.model_.collect())
+        print(vectorArima1.fitted_.collect())
+        print(vectorArima1.model_.collect()['CONTENT_VALUE'][3])
     n=input("Check for next district (press enter):")
     if(n=="break"):
         break
