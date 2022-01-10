@@ -70,7 +70,9 @@ def manual_arima(dist_df):
             print("Failed")
         for col in ['Yield','Rain','N_TC','P_TC','K_TC']:
             try:
+                print("=================")
                 print(col)
+                print("=================")
                 data_diff["ids"] = data_diff.index + 1
                 # dist_main_df["id"] = dist_main_df.index + 1
                 df = data_diff[['ids',col]]
@@ -114,9 +116,10 @@ def manual_arima(dist_df):
             plt.title("Final Forecast of "+col)
             plt.show()
 
-def auto_arima(dist_df):
+def auto_ARIMA(dist_df, dist):
     dist_main_df=dist_df
     dist_df=dist_df[['Yield','Rain','N_TC','P_TC','K_TC']]
+    out_df=pd.DataFrame()
     for col in dist_df.columns:
         print("=================")
         print(col)
@@ -146,6 +149,8 @@ def auto_arima(dist_df):
         lower_series = pd.Series(confint[:, 0], index=index_of_fc)
         upper_series = pd.Series(confint[:, 1], index=index_of_fc)
 
+        out_df[col] = fc_series
+
         # Plot
         plt.plot(dist_df[col].values)
         plt.plot(fc_series, color='darkgreen')
@@ -156,6 +161,7 @@ def auto_arima(dist_df):
 
         plt.title("Final Forecast of "+col)
         plt.show()
+    out_df.to_csv(os.getcwd()+"/Output/rice_forecast"+str(dist)+".csv")
 
 main_df=pd.read_csv(os.getcwd()+"/Output/rice.csv")
 
@@ -172,7 +178,7 @@ for dist in main_df.Dist.unique():
     if (cmd==1):
         manual_arima(dist_df)
     else:
-        auto_arima(dist_df)
+        auto_ARIMA(dist_df, dist)
 
     
         
