@@ -6,6 +6,7 @@ import os
 import numpy as np
 from statsmodels.tsa.stattools import grangercausalitytests
 from statsmodels.tsa.stattools import adfuller
+from hana_ml.algorithms.pal.tsa.vector_arima import VectorARIMA
 
 def adfuller_test(series, sig=0.1, name=''):
     res = adfuller(series, autolag='AIC')    
@@ -30,7 +31,7 @@ for dist in main_df.Dist.unique():
     dist_df[['Year','K_TC']].plot(x='Year',y='K_TC')
     
 
-    
+    dist_main_df=dist_df
     dist_df=dist_df[['Yield','Rain','N_TC','P_TC','K_TC']]
     #Granger Causality Test for 90%
     if dist==dist:
@@ -64,11 +65,18 @@ for dist in main_df.Dist.unique():
                 if (stationary_count==5):
                     break
                 cmd = int(input("Go for next level differencing (1 for yes): "))
+            vectorArima2 = VectorARIMA(order=(-1, diff, -1), model_type = 'VARMA', search_method='eccm', output_fitted=True, max_p=5, max_q=5)
+            vectorArima2.fit(data=dist_main_df)
+
+            print(vectorArima2.model_.collect())
+            print(vectorArima2.fitted_.collect())
+            print(vectorArima2.model_.collect()['CONTENT_VALUE'][3])
                 
 
                             
         except:
             print("Data Insufficient for this district")
+        
     n=input("Check for next district (press enter):")
     if(n=="break"):
         break
